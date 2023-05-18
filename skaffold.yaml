@@ -38,6 +38,7 @@ build:
 deploy:
   kubectl:
     manifests:
+      - ./kubernetes-manifests/gomicro.yaml
       - ./kubernetes-manifests/adservice.yaml
       - ./kubernetes-manifests/cartservice.yaml
       - ./kubernetes-manifests/checkoutservice.yaml
@@ -48,32 +49,3 @@ deploy:
       - ./kubernetes-manifests/productcatalogservice.yaml
       - ./kubernetes-manifests/recommendationservice.yaml
       - ./kubernetes-manifests/shippingservice.yaml
-      - ./kubernetes-manifests/gomicro.yaml
-# profiles:
-#   # "debug" profile replaces the default Dockerfile in cartservice with Dockerfile.debug,
-#   # which enables debugging via skaffold.
-#   #
-#   # This profile is used by default when running skaffold debug.
-#   - name: debug
-#     activation:
-#       - command: debug
-#     patches:
-#       - op: replace
-#         path: /build/artifacts/7/docker/dockerfile
-#         value: Dockerfile.debug
-
----
-apiVersion: skaffold/v2beta27
-kind: Config
-metadata:
-  name: loadgenerator
-requires:
-  - configs: [hipstershop]
-build:
-  artifacts:
-    - image: loadgenerator
-      context: src/loadgenerator
-deploy:
-  kubectl:
-    manifests:
-      - ./kubernetes-manifests/loadgenerator.yaml

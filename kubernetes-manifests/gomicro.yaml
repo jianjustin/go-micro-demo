@@ -28,6 +28,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: go-micro
+    namespace: default
 ---
 kind: Deployment
 apiVersion: apps/v1
