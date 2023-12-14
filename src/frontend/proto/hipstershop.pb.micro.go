@@ -659,3 +659,62 @@ type adServiceHandler struct {
 func (h *adServiceHandler) GetAds(ctx context.Context, in *AdRequest, out *AdResponse) error {
 	return h.AdServiceHandler.GetAds(ctx, in, out)
 }
+
+// Api Endpoints for Hello service
+
+func NewHelloEndpoints() []*api.Endpoint {
+	return []*api.Endpoint{}
+}
+
+// Client API for Hello service
+
+type HelloService interface {
+	Call(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error)
+}
+
+type helloService struct {
+	c    client.Client
+	name string
+}
+
+func NewHelloService(name string, c client.Client) HelloService {
+	return &helloService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *helloService) Call(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error) {
+	req := c.c.NewRequest(c.name, "Hello.Call", in)
+	out := new(CallResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Hello service
+
+type HelloHandler interface {
+	Call(context.Context, *CallRequest, *CallResponse) error
+}
+
+func RegisterHelloHandler(s server.Server, hdlr HelloHandler, opts ...server.HandlerOption) error {
+	type hello interface {
+		Call(ctx context.Context, in *CallRequest, out *CallResponse) error
+	}
+	type Hello struct {
+		hello
+	}
+	h := &helloHandler{hdlr}
+	return s.Handle(s.NewHandler(&Hello{h}, opts...))
+}
+
+type helloHandler struct {
+	HelloHandler
+}
+
+func (h *helloHandler) Call(ctx context.Context, in *CallRequest, out *CallResponse) error {
+	return h.HelloHandler.Call(ctx, in, out)
+}

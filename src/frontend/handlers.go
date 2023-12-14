@@ -404,6 +404,29 @@ func (fe *frontendServer) logoutHandler(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusFound)
 }
 
+func (fe *frontendServer) helloHandler(w http.ResponseWriter, r *http.Request) {
+	log := r.Context().Value(ctxKeyLog{}).(logrus.FieldLogger)
+	log.Debug("hello")
+	vars := mux.Vars(r)
+	username := vars["name"]
+	resp, err := fe.helloService.Call(r.Context(), &pb.CallRequest{Name: username})
+	if err != nil {
+		renderHTTPError(log, r, w, errors.Wrap(err, "failed to call hello service"), http.StatusInternalServerError)
+		return
+	}
+	if err := templates.ExecuteTemplate(w, "hello", map[string]interface{}{
+		"session_id":        sessionID(r),
+		"request_id":        r.Context().Value(ctxKeyRequestID{}),
+		"message":           resp.GetMsg(),
+		"platform_css":      plat.css,
+		"platform_name":     plat.provider,
+		"is_cymbal_brand":   isCymbalBrand,
+		"deploymentDetails": deploymentDetailsMap,
+	}); err != nil {
+		log.Println(err)
+	}
+}
+
 func (fe *frontendServer) setCurrencyHandler(w http.ResponseWriter, r *http.Request) {
 	log := r.Context().Value(ctxKeyLog{}).(logrus.FieldLogger)
 	cur := r.FormValue("currency_code")

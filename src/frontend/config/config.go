@@ -16,6 +16,7 @@ type Config struct {
 	ProductCatalogService string
 	RecommendationService string
 	ShippingService       string
+	HelloService          string
 }
 
 type TracingConfig struct {
@@ -36,6 +37,7 @@ var cfg *Config = &Config{
 	ProductCatalogService: "productcatalogservice",
 	RecommendationService: "recommendationservice",
 	ShippingService:       "shippingservice",
+	HelloService:          "helloservice",
 }
 
 func Get() Config {

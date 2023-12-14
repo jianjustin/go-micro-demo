@@ -55,6 +55,7 @@ type frontendServer struct {
 	productCatalogService pb.ProductCatalogService
 	recommendationService pb.RecommendationService
 	shippingService       pb.ShippingService
+	helloService          pb.HelloService
 }
 
 func main() {
@@ -111,11 +112,13 @@ func main() {
 		productCatalogService: pb.NewProductCatalogService(cfg.ProductCatalogService, client),
 		recommendationService: pb.NewRecommendationService(cfg.RecommendationService, client),
 		shippingService:       pb.NewShippingService(cfg.ShippingService, client),
+		helloService:          pb.NewHelloService(cfg.HelloService, client),
 	}
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", svc.homeHandler).Methods(http.MethodGet, http.MethodHead)
 	r.HandleFunc("/product/{id}", svc.productHandler).Methods(http.MethodGet, http.MethodHead)
+	r.HandleFunc("/hello/{name}", svc.helloHandler).Methods(http.MethodGet, http.MethodHead)
 	r.HandleFunc("/cart", svc.viewCartHandler).Methods(http.MethodGet, http.MethodHead)
 	r.HandleFunc("/cart", svc.addToCartHandler).Methods(http.MethodPost)
 	r.HandleFunc("/cart/empty", svc.emptyCartHandler).Methods(http.MethodPost)

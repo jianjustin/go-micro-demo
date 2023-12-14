@@ -30,6 +30,8 @@ build:
       context: src/frontend
     - image: adservice
       context: src/adservice
+    - image: helloservice
+      context: src/helloservice
   tagPolicy:
     gitCommit: {}
   local:
@@ -49,3 +51,4 @@ deploy:
       - ./kubernetes-manifests/productcatalogservice.yaml
       - ./kubernetes-manifests/recommendationservice.yaml
       - ./kubernetes-manifests/shippingservice.yaml
+      - ./kubernetes-manifests/helloservice.yaml
